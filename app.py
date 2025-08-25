@@ -1,3 +1,5 @@
+#Copyright @ISmartCoder
+#Updates Channel https://t,me/TheSmartDev
 import requests
 import random
 import string
@@ -351,8 +353,8 @@ def bomb_api():
 @app.route('/')
 def home():
     response = make_response("Welcome to the Bomber API! Use the /bomb endpoint with a POST request.")
-    # Allow embedding in iframes from the specified origins
-    response.headers['Content-Security-Policy'] = "frame-ancestors 'self' https://sms-bmbr-api.vercel.app https://bbinl.site;"
+    # Allow embedding in iframes from any origin
+    response.headers['Content-Security-Policy'] = "frame-ancestors *;"
     return response
 
 if __name__ == '__main__':
