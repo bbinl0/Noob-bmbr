@@ -1,16 +1,14 @@
-#Copyright @ISmartCoder
-#Updates Channel https://t,me/TheSmartDev
 import requests
 import random
 import string
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["https://sms-bmbr-api.vercel.app"])
+CORS(app, origins=["https://sms-bmbr-api.vercel.app"]) # This CORS is for API calls, not for iframe embedding.
 
 def random_string(pattern):
     result = ''
@@ -352,7 +350,10 @@ def bomb_api():
 
 @app.route('/')
 def home():
-    return "Welcome to the Bomber API! Use the /bomb endpoint with a POST request."
+    response = make_response("Welcome to the Bomber API! Use the /bomb endpoint with a POST request.")
+    # Allow embedding in iframes from the specified origins
+    response.headers['Content-Security-Policy'] = "frame-ancestors 'self' https://sms-bmbr-api.vercel.app https://bbinl.site;"
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
