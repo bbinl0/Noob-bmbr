@@ -1,3 +1,5 @@
+#Copyright @ISmartCoder
+#Updates Channel https://t,me/TheSmartDev
 import requests
 import random
 import string
@@ -929,10 +931,10 @@ def bomb_api():
 
 @app.route('/')
 def home():
-    response = make_response("Welcome to the Bomber API! Use the /bomb endpoint with a POST request.")
-    # Allow embedding in iframes from any origin
-    response.headers['Content-Security-Policy'] = "frame-ancestors *;"
-    return response
+    return app.send_static_file('index.html')
+
+# Serve static files (like index.html) from the current directory
+app.static_folder = '.'
 
 if __name__ == '__main__':
     app.run(debug=True)
