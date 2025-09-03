@@ -972,7 +972,7 @@ def process_number_api(number, amount):
                         results.append({"status": "failed", "api": api_name, "response_code": result.status_code if result else "N/A"})
                 except Exception as e:
                     results.append({"status": "error", "api": api_name, "error_message": str(e)})
-        time.sleep(1) # Delay between batches of requests
+        time.sleep(60) # Delay between batches of requests (1 minute)
 
     return {"total_requests_attempted": amount * (len(apis) + 6), "successful_requests": success_count, "details": results}
 
